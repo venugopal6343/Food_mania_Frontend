@@ -176,7 +176,8 @@ export class MainDashboardPageComponent implements OnInit {
     this.refreshMenu();
   }
 
-  setSpiceLevel(value: string): void {
+  setSpiceLevel(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
     this.spiceLevel.set(value as SpiceLevel | '');
     this.refreshMenu();
   }

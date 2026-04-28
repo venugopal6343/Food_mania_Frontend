@@ -1,0 +1,64 @@
+<form class="generic-form" [formGroup]="form()" (ngSubmit)="submit()">
+  @if (config().title) {
+    <h2>{{ config().title }}</h2>
+  }
+
+  <div class="generic-form__grid">
+    @for (field of config().fields; track field.key) {
+      <div class="field" [class.field--checkbox]="field.type === 'checkbox'">
+        <label [for]="field.key">{{ field.label }}</label>
+
+        @switch (field.type) {
+          @case ('textarea') {
+            <textarea
+              [id]="field.key"
+              [formControlName]="field.key"
+              [placeholder]="field.placeholder ?? ''"
+              [rows]="field.rows ?? 4"
+            ></textarea>
+          }
+
+          @case ('select') {
+            <select [id]="field.key" [formControlName]="field.key">
+              @for (option of field.options ?? []; track option.value) {
+                <option [ngValue]="option.value">{{ option.label }}</option>
+              }
+            </select>
+          }
+
+          @case ('checkbox') {
+            <input [id]="field.key" type="checkbox" [formControlName]="field.key">
+          }
+
+          @default {
+            <input
+              [id]="field.key"
+              [type]="field.type"
+              [formControlName]="field.key"
+              [placeholder]="field.placeholder ?? ''"
+              [attr.min]="field.min ?? null"
+              [attr.max]="field.max ?? null"
+              [attr.step]="field.step ?? null"
+              [attr.autocomplete]="field.autocomplete ?? null"
+            >
+          }
+        }
+
+        @if (errorFor(field.key)) {
+          <p class="field-error">{{ errorFor(field.key) }}</p>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="generic-form__actions">
+    @if (config().cancelLabel) {
+      <button type="button" class="secondary-action" (click)="formCancel.emit()">
+        {{ config().cancelLabel }}
+      </button>
+    }
+    <button type="submit" class="primary-action" [disabled]="submitting()">
+      {{ submitting() ? 'Working...' : config().submitLabel }}
+    </button>
+  </div>
+</form>

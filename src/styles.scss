@@ -1,0 +1,160 @@
+:root {
+  --fm-bg: #f7f3ec;
+  --fm-surface: #ffffff;
+  --fm-surface-warm: #fff8ed;
+  --fm-surface-strong: #171412;
+  --fm-text: #211b17;
+  --fm-muted: #6d625b;
+  --fm-brand: #f04c24;
+  --fm-brand-dark: #be2f0c;
+  --fm-accent: #00846e;
+  --fm-warning: #b7791f;
+  --fm-danger: #b42318;
+  --fm-success: #047857;
+  --fm-line: #e6d8c4;
+  --fm-shadow: 0 20px 50px rgba(25, 16, 10, 0.12);
+  --fm-radius-sm: 8px;
+  --fm-radius-md: 12px;
+  --fm-radius-lg: 18px;
+  --fm-space-1: 0.25rem;
+  --fm-space-2: 0.5rem;
+  --fm-space-3: 0.75rem;
+  --fm-space-4: 1rem;
+  --fm-space-5: 1.5rem;
+  --fm-space-6: 2rem;
+  --fm-font-body: "Space Grotesk", system-ui, sans-serif;
+  --fm-font-display: "Bebas Neue", Impact, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100%;
+  margin: 0;
+  font-family: var(--fm-font-body);
+  color: var(--fm-text);
+  background: linear-gradient(180deg, #fffdf8 0%, var(--fm-bg) 42%, #f3eee6 100%);
+  line-height: 1.55;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+p {
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--fm-font-display);
+  letter-spacing: 0.03em;
+}
+
+.container {
+  width: min(1180px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.eyebrow {
+  color: var(--fm-brand);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.surface-panel {
+  border: 1px solid var(--fm-line);
+  border-radius: var(--fm-radius-lg);
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: var(--fm-shadow);
+}
+
+.field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.field label {
+  color: #4d443d;
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  border: 1px solid var(--fm-line);
+  border-radius: var(--fm-radius-md);
+  background: #fff;
+  color: var(--fm-text);
+  padding: 0.72rem 0.8rem;
+  outline: none;
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--fm-brand);
+  box-shadow: 0 0 0 3px rgba(240, 76, 36, 0.12);
+}
+
+.link-button {
+  border: 0;
+  background: transparent;
+  color: var(--fm-brand-dark);
+  font-weight: 800;
+  padding: 0;
+}
+
+.muted {
+  color: var(--fm-muted);
+}
+
+.empty-state {
+  border: 1px dashed var(--fm-line);
+  border-radius: var(--fm-radius-md);
+  color: var(--fm-muted);
+  padding: 1rem;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .container {
+    width: min(100% - 1.25rem, 1180px);
+  }
+}

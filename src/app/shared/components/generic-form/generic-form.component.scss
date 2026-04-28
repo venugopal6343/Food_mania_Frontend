@@ -1,0 +1,57 @@
+.generic-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.generic-form h2 {
+  font-size: 2rem;
+}
+
+.generic-form__grid {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.field--checkbox {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+}
+
+.field--checkbox label {
+  order: 2;
+}
+
+.field--checkbox input {
+  width: 1.15rem;
+  height: 1.15rem;
+}
+
+.field-error {
+  color: var(--fm-danger);
+  font-size: 0.82rem;
+}
+
+.generic-form__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.primary-action,
+.secondary-action {
+  border-radius: 999px;
+  padding: 0.72rem 1.1rem;
+  font-weight: 800;
+}
+
+.primary-action {
+  border: 0;
+  background: linear-gradient(120deg, var(--fm-brand), var(--fm-brand-dark));
+  color: #fff;
+}
+
+.secondary-action {
+  border: 1px solid var(--fm-line);
+  background: #fff;
+  color: var(--fm-text);
+}

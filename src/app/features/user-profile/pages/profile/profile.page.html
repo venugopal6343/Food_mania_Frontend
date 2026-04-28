@@ -1,0 +1,32 @@
+<section class="profile-page">
+  <div class="container profile-grid">
+    <div class="profile-copy">
+      <p class="eyebrow">User Profile</p>
+      <h1>{{ displayProfile().fullName }}</h1>
+      <p>Identity and role state are sourced from the active JWT session and the backend profile endpoint.</p>
+    </div>
+
+    <article class="profile-card surface-panel">
+      <div class="avatar">{{ displayProfile().fullName.slice(0, 1) }}</div>
+      <div>
+        <h2>{{ displayProfile().fullName }}</h2>
+        <p>{{ displayProfile().email }}</p>
+      </div>
+      <dl>
+        <div>
+          <dt>Role</dt>
+          <dd>
+            <fm-status-pill
+              [label]="displayProfile().role"
+              [tone]="displayProfile().role === 'ROLE_ADMIN' ? 'warning' : 'info'"
+            />
+          </dd>
+        </div>
+        <div>
+          <dt>Created</dt>
+          <dd>{{ displayProfile().createdAt }}</dd>
+        </div>
+      </dl>
+    </article>
+  </div>
+</section>

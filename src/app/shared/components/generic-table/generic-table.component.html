@@ -1,0 +1,53 @@
+<div class="table-shell">
+  <table>
+    <thead>
+      <tr>
+        @for (column of columns(); track column.key) {
+          <th [class]="alignClass(column.align)" [style.width]="column.width ?? null">
+            {{ column.label }}
+          </th>
+        }
+
+        @if (actions().length > 0) {
+          <th class="align-end">Actions</th>
+        }
+      </tr>
+    </thead>
+
+    <tbody>
+      @if (loading()) {
+        <tr>
+          <td [attr.colspan]="columnCount()" class="table-state">Loading...</td>
+        </tr>
+      } @else if (data().length === 0) {
+        <tr>
+          <td [attr.colspan]="columnCount()" class="table-state">{{ emptyLabel() }}</td>
+        </tr>
+      } @else {
+        @for (row of data(); track trackRow($index, row)) {
+          <tr>
+            @for (column of columns(); track column.key) {
+              <td [class]="alignClass(column.align)">{{ cell(row, column) }}</td>
+            }
+
+            @if (actions().length > 0) {
+              <td class="table-actions">
+                @for (action of actions(); track action.id) {
+                  <button
+                    type="button"
+                    [class.action-danger]="action.tone === 'danger'"
+                    [class.action-primary]="action.tone === 'primary'"
+                    [disabled]="action.disabled?.(row) ?? false"
+                    (click)="rowAction.emit({ actionId: action.id, row })"
+                  >
+                    {{ action.label }}
+                  </button>
+                }
+              </td>
+            }
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+</div>

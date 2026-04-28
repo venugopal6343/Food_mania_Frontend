@@ -1,0 +1,48 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  background: rgba(20, 16, 12, 0.44);
+  backdrop-filter: blur(2px);
+}
+
+.modal-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 90;
+  width: min(560px, calc(100% - 2rem));
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+  transform: translate(-50%, -50%);
+  border: 1px solid var(--fm-line);
+  border-radius: var(--fm-radius-lg);
+  background: #fff;
+  box-shadow: var(--fm-shadow);
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-bottom: 1px solid var(--fm-line);
+  padding: 1rem;
+}
+
+h2 {
+  font-size: 1.8rem;
+}
+
+button {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--fm-line);
+  border-radius: var(--fm-radius-sm);
+  background: #fff;
+  font-weight: 900;
+}
+
+::ng-deep .modal-body {
+  padding: 1rem;
+}

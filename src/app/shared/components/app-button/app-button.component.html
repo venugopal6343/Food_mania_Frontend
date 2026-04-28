@@ -1,0 +1,17 @@
+<button
+  class="fm-button"
+  [class.fm-button--primary]="tone() === 'primary'"
+  [class.fm-button--ghost]="tone() === 'ghost'"
+  [class.fm-button--neutral]="tone() === 'neutral'"
+  [class.fm-button--danger]="tone() === 'danger'"
+  [type]="type()"
+  [disabled]="disabled() || loading()"
+  (click)="clicked.emit($event)"
+>
+  @if (loading()) {
+    <span class="fm-button__spinner" aria-hidden="true"></span>
+  }
+  <span class="fm-button__content">
+    <ng-content></ng-content>
+  </span>
+</button>

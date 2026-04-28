@@ -1,0 +1,24 @@
+<section class="auth-page">
+  <div class="container auth-grid">
+    <div class="auth-copy">
+      <p class="eyebrow">Fresh Account</p>
+      <h1>Build your Food Mania profile.</h1>
+      <p>
+        New accounts receive the backend `ROLE_USER` role and can immediately
+        browse categories, build a cart, and place sandbox orders.
+      </p>
+    </div>
+
+    <div class="auth-card surface-panel">
+      <fm-generic-form
+        [config]="formConfig"
+        [submitting]="submitting()"
+        (formSubmit)="submit($event)"
+      />
+      <p class="auth-switch">
+        Already have access?
+        <a routerLink="/auth/login">Sign in</a>
+      </p>
+    </div>
+  </div>
+</section>

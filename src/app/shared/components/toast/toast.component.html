@@ -1,0 +1,12 @@
+@if (messages.message(); as message) {
+  <div
+    class="toast"
+    [class.toast--success]="message.tone === 'success'"
+    [class.toast--warning]="message.tone === 'warning'"
+    [class.toast--danger]="message.tone === 'danger'"
+    role="status"
+    aria-live="polite"
+  >
+    {{ message.text }}
+  </div>
+}

@@ -1,0 +1,27 @@
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.2rem;
+  z-index: 120;
+  max-width: min(520px, calc(100% - 2rem));
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: var(--fm-surface-strong);
+  color: #fff;
+  box-shadow: 0 16px 30px rgba(10, 8, 7, 0.27);
+  padding: 0.68rem 1rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.toast--success {
+  background: var(--fm-success);
+}
+
+.toast--warning {
+  background: var(--fm-warning);
+}
+
+.toast--danger {
+  background: var(--fm-danger);
+}

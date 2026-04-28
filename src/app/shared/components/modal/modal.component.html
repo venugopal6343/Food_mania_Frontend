@@ -1,0 +1,10 @@
+@if (open()) {
+  <div class="modal-backdrop" (click)="closed.emit()"></div>
+  <section class="modal-panel" role="dialog" aria-modal="true" [attr.aria-label]="title()">
+    <header>
+      <h2>{{ title() }}</h2>
+      <button type="button" aria-label="Close modal" (click)="closed.emit()">X</button>
+    </header>
+    <ng-content></ng-content>
+  </section>
+}

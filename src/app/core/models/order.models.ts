@@ -1,13 +1,13 @@
 import { IsoInstant, Uuid } from './api.models';
 
-export type PaymentProvider = 'STRIPE' | 'RAZORPAY';
+export type PaymentProvider = 'STRIPE' | 'RAZORPAY' | 'PHONEPE';
 export type OrderStatus = 'PENDING' | 'PREPARING' | 'OUT_FOR_DELIVERY' | 'DELIVERED' | 'CANCELLED';
 export type PaymentStatus = 'CREATED' | 'SUCCESS' | 'FAILED' | 'REFUNDED';
 export type PaymentRecordStatus = 'INITIATED' | 'SUCCESS' | 'FAILED' | 'REFUNDED';
 
 export interface CheckoutRequest {
   provider: PaymentProvider;
-  sandboxPaymentToken: string;
+  sandboxPaymentToken?: string;
   currency: string;
 }
 
@@ -27,11 +27,14 @@ export interface OrderItemResponse {
 export interface PaymentRecordResponse {
   id: Uuid;
   provider: PaymentProvider;
-  providerOrderId: string;
-  transactionId: string;
+  merchantOrderId: string | null;
+  providerOrderId: string | null;
+  transactionId: string | null;
   status: PaymentRecordStatus;
   amount: number;
   currency: string;
+  checkoutUrl: string | null;
+  expiresAt: IsoInstant | null;
   createdAt: IsoInstant;
 }
 

@@ -18,7 +18,8 @@ export const apiEndpoints = {
   orders: {
     checkout: '/api/v1/orders/checkout',
     list: '/api/v1/orders',
-    byId: (id: string) => `/api/v1/orders/${id}`
+    byId: (id: string) => `/api/v1/orders/${id}`,
+    paymentStatus: (id: string) => `/api/v1/orders/${id}/payment-status`
   },
   users: {
     me: '/api/v1/users/me'

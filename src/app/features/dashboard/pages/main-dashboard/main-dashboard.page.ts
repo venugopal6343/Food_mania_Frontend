@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { finalize } from 'rxjs';
 import { environment } from '../../../../configs/environment';
 import { CartLineResponse } from '../../../../core/models/cart.models';
 import { CategoryResponse, MenuFilters, MenuItemResponse, SpiceLevel } from '../../../../core/models/menu.models';
-import { PaymentProvider } from '../../../../core/models/order.models';
+import { OrderResponse, PaymentProvider } from '../../../../core/models/order.models';
 import { AdminDashboardService } from '../../../../core/services/admin-dashboard.service';
 import { AppMessageService } from '../../../../core/services/app-message.service';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -33,7 +33,7 @@ interface DashboardMetric {
   styleUrl: './main-dashboard.page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MainDashboardPageComponent implements OnInit {
+export class MainDashboardPageComponent implements OnInit, OnDestroy {
   readonly auth = inject(AuthService);
   readonly menu = inject(MenuService);
   readonly cart = inject(CartService);
@@ -56,8 +56,12 @@ export class MainDashboardPageComponent implements OnInit {
   readonly checkoutOpen = signal(false);
   readonly actionLoading = signal(false);
   readonly checkoutLoading = signal(false);
-  readonly paymentProvider = signal<PaymentProvider>('RAZORPAY');
+  readonly paymentProvider = signal<PaymentProvider>('PHONEPE');
   readonly sandboxPaymentToken = signal('tok_sandbox_success');
+  readonly isPhonePeSelected = computed(() => this.paymentProvider() === 'PHONEPE');
+
+  private phonePePollTimer: ReturnType<typeof setTimeout> | null = null;
+  private phonePePollAttempts = 0;
 
   readonly isUser = computed(() => this.auth.session()?.role === 'ROLE_USER');
   readonly categories = computed(() => [
@@ -143,6 +147,10 @@ export class MainDashboardPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadDashboard();
+  }
+
+  ngOnDestroy(): void {
+    this.stopPhonePeStatusPolling();
   }
 
   loadDashboard(): void {
@@ -241,15 +249,21 @@ export class MainDashboardPageComponent implements OnInit {
       return;
     }
 
+    const provider = this.paymentProvider();
+    const checkoutRequest = provider === 'PHONEPE'
+      ? { provider, currency: environment.defaultCurrency }
+      : { provider, sandboxPaymentToken: this.sandboxPaymentToken(), currency: environment.defaultCurrency };
+
     this.checkoutLoading.set(true);
-    this.orders.checkout({
-      provider: this.paymentProvider(),
-      sandboxPaymentToken: this.sandboxPaymentToken(),
-      currency: environment.defaultCurrency
-    }).pipe(
+    this.orders.checkout(checkoutRequest).pipe(
       finalize(() => this.checkoutLoading.set(false))
     ).subscribe({
       next: (order) => {
+        if (provider === 'PHONEPE') {
+          this.handlePhonePeCheckout(order);
+          return;
+        }
+
         this.messages.show(`Order ${order.orderNumber} placed successfully.`, 'success');
         this.checkoutOpen.set(false);
         this.cartOpen.set(false);
@@ -293,6 +307,77 @@ export class MainDashboardPageComponent implements OnInit {
       dateStyle: 'medium',
       timeStyle: 'short'
     }).format(new Date(value));
+  }
+
+  private handlePhonePeCheckout(order: OrderResponse): void {
+    const checkoutUrl = order.payment?.checkoutUrl;
+    if (!checkoutUrl) {
+      this.messages.show('PhonePe checkout URL was not generated. Please retry.', 'danger');
+      return;
+    }
+
+    const paymentWindow = window.open(checkoutUrl, '_blank', 'noopener,noreferrer');
+    if (!paymentWindow) {
+      this.messages.show('PhonePe page was blocked by browser popup settings. Please allow popups and retry.', 'warning');
+      return;
+    }
+
+    this.messages.show('PhonePe checkout opened. Complete payment to confirm your order.', 'info');
+    this.checkoutOpen.set(false);
+    this.cartOpen.set(false);
+    this.cart.loadCart().subscribe({ error: () => undefined });
+    this.startPhonePeStatusPolling(order.id);
+  }
+
+  private startPhonePeStatusPolling(orderId: string): void {
+    this.stopPhonePeStatusPolling();
+    this.phonePePollAttempts = 0;
+
+    const poll = () => {
+      this.phonePePollAttempts += 1;
+      this.orders.refreshPaymentStatus(orderId).subscribe({
+        next: (latestOrder) => {
+          if (latestOrder.paymentStatus === 'SUCCESS') {
+            this.messages.show(`Payment done. Order ${latestOrder.orderNumber} confirmed.`, 'success');
+            this.stopPhonePeStatusPolling();
+            this.orders.loadOrders().subscribe({ error: () => undefined });
+            return;
+          }
+
+          if (latestOrder.paymentStatus === 'FAILED') {
+            this.messages.show('Payment failed. Please place the order again.', 'danger');
+            this.stopPhonePeStatusPolling();
+            this.orders.loadOrders().subscribe({ error: () => undefined });
+            return;
+          }
+
+          if (this.phonePePollAttempts >= 40) {
+            this.messages.show('Payment is still pending. Use Refresh Orders to check again.', 'warning');
+            this.stopPhonePeStatusPolling();
+            return;
+          }
+
+          this.phonePePollTimer = setTimeout(poll, 6000);
+        },
+        error: () => {
+          if (this.phonePePollAttempts >= 40) {
+            this.messages.show('Unable to confirm payment right now. Refresh orders after payment.', 'warning');
+            this.stopPhonePeStatusPolling();
+            return;
+          }
+          this.phonePePollTimer = setTimeout(poll, 6000);
+        }
+      });
+    };
+
+    this.phonePePollTimer = setTimeout(poll, 6000);
+  }
+
+  private stopPhonePeStatusPolling(): void {
+    if (this.phonePePollTimer) {
+      clearTimeout(this.phonePePollTimer);
+      this.phonePePollTimer = null;
+    }
   }
 }
 

@@ -22,4 +22,13 @@ export class OrderService {
       tap((order) => this.ordersState.update((orders) => [order, ...orders]))
     );
   }
+
+  refreshPaymentStatus(orderId: string): Observable<OrderResponse> {
+    return this.http.get<OrderResponse>(apiEndpoints.orders.paymentStatus(orderId)).pipe(
+      tap((freshOrder) =>
+        this.ordersState.update((orders) =>
+          orders.map((existing) => (existing.id === freshOrder.id ? freshOrder : existing))
+        ))
+    );
+  }
 }

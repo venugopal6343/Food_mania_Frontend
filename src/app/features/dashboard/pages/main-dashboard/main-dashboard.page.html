@@ -4,7 +4,7 @@
       <p class="eyebrow">Kitchen Live Now</p>
       <h1>Food Mania command center.</h1>
       <p>
-        Browse the live backend menu, manage cart state, and place sandbox orders
+        Browse the live backend menu, manage cart state, and place secure orders
         through the Spring Boot controllers.
       </p>
       <div class="hero-actions">
@@ -38,7 +38,7 @@
     <span>Freshly Batch-Cooked</span>
     <span>Hygiene-First Kitchen</span>
     <span>High Protein Options</span>
-    <span>Sandbox Checkout</span>
+    <span>PhonePe Checkout</span>
     <span>JWT Protected APIs</span>
     <span>Freshly Batch-Cooked</span>
   </div>
@@ -211,20 +211,27 @@
     </footer>
   </aside>
 
-  <fm-modal [open]="checkoutOpen()" title="Sandbox Checkout" (closed)="checkoutOpen.set(false)">
+  <fm-modal [open]="checkoutOpen()" title="Secure Checkout" (closed)="checkoutOpen.set(false)">
     <div class="modal-body checkout-form">
       <label class="field">
         <span>Provider</span>
         <select [value]="paymentProvider()" (change)="setPaymentProvider($event)">
+          <option value="PHONEPE">PhonePe</option>
           <option value="RAZORPAY">Razorpay</option>
           <option value="STRIPE">Stripe</option>
         </select>
       </label>
 
-      <label class="field">
-        <span>Sandbox token</span>
-        <input type="text" [value]="sandboxPaymentToken()" (input)="setPaymentToken($event)">
-      </label>
+      @if (!isPhonePeSelected()) {
+        <label class="field">
+          <span>Sandbox token</span>
+          <input type="text" [value]="sandboxPaymentToken()" (input)="setPaymentToken($event)">
+        </label>
+      } @else {
+        <p class="helper-text">
+          You will be redirected to PhonePe hosted checkout. On desktop, PhonePe shows a QR for customer scan and pay.
+        </p>
+      }
 
       <div class="checkout-total">
         <span>Total</span>
@@ -232,7 +239,7 @@
       </div>
 
       <button type="button" class="primary-link checkout-submit" [disabled]="checkoutLoading()" (click)="checkout()">
-        {{ checkoutLoading() ? 'Placing Order...' : 'Place Order' }}
+        {{ checkoutLoading() ? 'Processing...' : (isPhonePeSelected() ? 'Continue to PhonePe' : 'Place Order') }}
       </button>
     </div>
   </fm-modal>
